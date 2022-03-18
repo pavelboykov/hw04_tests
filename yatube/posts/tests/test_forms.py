@@ -50,7 +50,7 @@ class PostCreateFormTests(TestCase):
             response,
             reverse('posts:profile', kwargs={'username': 'TestAuthUser'})
         )
-        self.assertEqual(Post.objects.count(), post_count+1)
+        self.assertEqual(Post.objects.count(), post_count + 1)
         self.assertTrue(
             Post.objects.filter(text='Введенный в форму текст').exists()
         )
