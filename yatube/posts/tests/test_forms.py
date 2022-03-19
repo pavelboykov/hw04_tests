@@ -1,13 +1,10 @@
 from http import HTTPStatus
 
-from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
 
 from ..forms import PostForm
-from ..models import Group, Post
-
-User = get_user_model()
+from ..models import Group, Post, User
 
 
 class PostCreateFormTests(TestCase):
@@ -48,7 +45,9 @@ class PostCreateFormTests(TestCase):
         )
         self.assertRedirects(
             response,
-            reverse('posts:profile', kwargs={'username': 'TestAuthUser'})
+            reverse(
+                'posts:profile', kwargs={'username': self.auth_user.username}
+            )
         )
         self.assertEqual(Post.objects.count(), post_count + 1)
         self.assertTrue(

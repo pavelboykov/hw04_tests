@@ -1,11 +1,8 @@
 from django import forms
-from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
 
-from ..models import Group, Post
-
-User = get_user_model()
+from ..models import Group, Post, User
 
 
 class PostTests(TestCase):
@@ -67,7 +64,9 @@ class PostTests(TestCase):
 
     def test_group_list_page_show_correct_context(self):
         """Шаблон group_list сформирован с правильным контекстом."""
-        url = reverse('posts:group_list', kwargs={'slug': 'test-slug'})
+        url = reverse(
+            'posts:group_list', kwargs={'slug': self.group.slug}
+        )
         response = self.authorized_client.get(url)
         group_title = response.context.get('group').title
         group_description = response.context.get('group').description
@@ -134,8 +133,10 @@ class PostTests(TestCase):
         """
         urls = (
             reverse('posts:index'),
-            reverse('posts:group_list', kwargs={'slug': 'test-slug'}),
-            reverse('posts:profile', kwargs={'username': 'TestAuthor'}),
+            reverse('posts:group_list', kwargs={'slug': self.group.slug}),
+            reverse(
+                'posts:profile', kwargs={'username': self.author.username}
+            ),
         )
         for url in urls:
             response = self.authorized_client_author.get(url)
@@ -181,28 +182,30 @@ class PaginatorViewsTest(TestCase):
         """
         urls = (
             reverse('posts:index'),
-            reverse('posts:group_list', kwargs={'slug': 'test-slug'}),
-            reverse('posts:profile', kwargs={'username': 'TestAuthor'}),
+            reverse('posts:group_list', kwargs={'slug': self.group.slug}),
+            reverse(
+                'posts:profile', kwargs={'username': self.author.username}
+            ),
         )
         for url in urls:
             response = self.client.get(url)
-            self.assertEqual(
-                len(response.context.get('page_obj').object_list), 10
-            )
+            amount_posts = len(response.context.get('page_obj').object_list)
+            self.assertEqual(amount_posts, 10)
 
     def test_second_page_contains_three_records(self):
-        """На страницах index, group_list, profile должно быть по три поста."""
+        """На страницах index, group_list, profile
+        должно быть по три поста.
+        """
         urls = (
             reverse('posts:index') + '?page=2',
             reverse(
-                'posts:group_list', kwargs={'slug': 'test-slug'}
+                'posts:group_list', kwargs={'slug': self.group.slug}
             ) + '?page=2',
             reverse(
-                'posts:profile', kwargs={'username': 'TestAuthor'}
+                'posts:profile', kwargs={'username': self.author.username}
             ) + '?page=2',
         )
         for url in urls:
             response = self.client.get(url)
-            self.assertEqual(
-                len(response.context.get('page_obj').object_list), 3
-            )
+            amount_posts = len(response.context.get('page_obj').object_list)
+            self.assertEqual(amount_posts, 3)
