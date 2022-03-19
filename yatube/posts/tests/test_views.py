@@ -34,7 +34,7 @@ class PostTests(TestCase):
 
     def test_pages_uses_correct_template(self):
         """URL-адрес использует соответствующий шаблон."""
-        name_pages_templates = {
+        page_names_templates = {
             reverse('posts:index'): 'posts/index.html',
             reverse(
                 'posts:group_list', kwargs={'slug': self.group.slug}
@@ -50,7 +50,7 @@ class PostTests(TestCase):
             ): 'posts/create_post.html',
             reverse('posts:post_create'): 'posts/create_post.html',
         }
-        for reverse_name, template in name_pages_templates.items():
+        for reverse_name, template in page_names_templates.items():
             with self.subTest(template=template):
                 response = self.authorized_client_author.get(reverse_name)
                 self.assertTemplateUsed(response, template)
