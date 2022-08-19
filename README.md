@@ -11,7 +11,7 @@
 * Клонировать репозиторий и перейти в него в командной строке: 
   ```
   git clone https://github.com/pavelboykov/hw04_tests.git
-  cd yatube
+  cd hw04_tests
   ```
 * Cоздать и активировать виртуальное окружение:
   * Windows
